@@ -1,0 +1,88 @@
+{
+  "version": "21.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "MyCdkSftpStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://964685753046/eu-north-1",
+      "properties": {
+        "templateFile": "MyCdkSftpStack.template.json",
+        "validateOnSynth": false
+      },
+      "metadata": {
+        "/MyCdkSftpStack/MySftpBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MySftpBucketED1BD50F",
+            "trace": [
+              "new Bucket (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/aws-s3/lib/bucket.js:738:26)",
+              "Kernel._create (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:9964:29)",
+              "Kernel.create (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:9693:29)",
+              "KernelHost.processRequest (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11544:36)",
+              "KernelHost.run (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11504:22)",
+              "Immediate._onImmediate (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11505:46)",
+              "process.processImmediate (node:internal/timers:478:21)"
+            ]
+          }
+        ],
+        "/MyCdkSftpStack/SftpRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SftpRoleA6503DD0",
+            "trace": [
+              "new Role (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/aws-iam/lib/role.js:63:22)",
+              "Kernel._create (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:9964:29)",
+              "Kernel.create (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:9693:29)",
+              "KernelHost.processRequest (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11544:36)",
+              "KernelHost.run (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11504:22)",
+              "Immediate._onImmediate (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11505:46)",
+              "process.processImmediate (node:internal/timers:478:21)"
+            ]
+          }
+        ],
+        "/MyCdkSftpStack/MySftpServer": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MySftpServer",
+            "trace": [
+              "Kernel._create (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:9964:29)",
+              "Kernel.create (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:9693:29)",
+              "KernelHost.processRequest (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11544:36)",
+              "KernelHost.run (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11504:22)",
+              "Immediate._onImmediate (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11505:46)",
+              "process.processImmediate (node:internal/timers:478:21)"
+            ]
+          }
+        ],
+        "/MyCdkSftpStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata",
+            "trace": [
+              "new MetadataResource (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/core/lib/private/metadata-resource.js:22:30)",
+              "/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/core/lib/private/synthesis.js:139:9",
+              "visit (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/core/lib/private/synthesis.js:200:9)",
+              "visit (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/core/lib/private/synthesis.js:197:9)",
+              "injectMetadataResources (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/core/lib/private/synthesis.js:128:5)",
+              "Object.synthesize (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/core/lib/private/synthesis.js:17:5)",
+              "App.synth (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-kernel-Pto0PG/node_modules/monocdk/lib/core/lib/stage.js:104:41)",
+              "/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:9769:105",
+              "Kernel._ensureSync (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:10358:28)",
+              "Kernel.invoke (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:9769:34)",
+              "KernelHost.processRequest (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11544:36)",
+              "KernelHost.run (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11504:22)",
+              "Immediate._onImmediate (/private/var/folders/rg/wgl11qmj6jl2fryl9qwrcm580000gn/T/jsii-runtime.1102437305/lib/program.js:11505:46)",
+              "process.processImmediate (node:internal/timers:478:21)"
+            ]
+          }
+        ]
+      },
+      "displayName": "MyCdkSftpStack"
+    }
+  }
+}

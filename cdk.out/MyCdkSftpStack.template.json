@@ -1,0 +1,68 @@
+{
+ "Resources": {
+  "MySftpBucketED1BD50F": {
+   "Type": "AWS::S3::Bucket",
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/MySftpBucket/Resource"
+   }
+  },
+  "SftpRoleA6503DD0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "transfer.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonS3FullAccess"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/SftpRole/Resource"
+   }
+  },
+  "MySftpServer": {
+   "Type": "AWS::Transfer::Server",
+   "Properties": {
+    "EndpointType": "PUBLIC",
+    "IdentityProviderType": "SERVICE_MANAGED",
+    "Protocols": [
+     "SFTP"
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/MySftpServer"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/yWLQQrDIBAA35K73SQ29AH1B+YBQcxarHWFVZuD+PeS5jTDwMwgpwWmISZKdg/Q1mJsEObIW8t3aM9qAxahHF3WhTcRmk4fPOPJLgobyg4ZlKMV+YvchUqUC1f7fzXmVNliF680g5Qwj7vhw9NoOD6W4Z29v3Gl4iOCvvgDN4/SNpoAAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/CDKMetadata/Default"
+   }
+  }
+ }
+}

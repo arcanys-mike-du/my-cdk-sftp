@@ -1,0 +1,138 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "monocdk.Construct",
+          "version": "1.204.0"
+        }
+      },
+      "MyCdkSftpStack": {
+        "id": "MyCdkSftpStack",
+        "path": "MyCdkSftpStack",
+        "children": {
+          "MySftpBucket": {
+            "id": "MySftpBucket",
+            "path": "MyCdkSftpStack/MySftpBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "MyCdkSftpStack/MySftpBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {}
+                },
+                "constructInfo": {
+                  "fqn": "monocdk.aws_s3.CfnBucket",
+                  "version": "1.204.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "monocdk.aws_s3.Bucket",
+              "version": "1.204.0"
+            }
+          },
+          "SftpRole": {
+            "id": "SftpRole",
+            "path": "MyCdkSftpStack/SftpRole",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "MyCdkSftpStack/SftpRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "transfer.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "managedPolicyArns": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/AmazonS3FullAccess"
+                          ]
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "monocdk.aws_iam.CfnRole",
+                  "version": "1.204.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "monocdk.aws_iam.Role",
+              "version": "1.204.0"
+            }
+          },
+          "MySftpServer": {
+            "id": "MySftpServer",
+            "path": "MyCdkSftpStack/MySftpServer",
+            "attributes": {
+              "aws:cdk:cloudformation:type": "AWS::Transfer::Server",
+              "aws:cdk:cloudformation:props": {
+                "endpointType": "PUBLIC",
+                "identityProviderType": "SERVICE_MANAGED",
+                "protocols": [
+                  "SFTP"
+                ]
+              }
+            },
+            "constructInfo": {
+              "fqn": "monocdk.aws_transfer.CfnServer",
+              "version": "1.204.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "MyCdkSftpStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "MyCdkSftpStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "monocdk.CfnResource",
+                  "version": "1.204.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "monocdk.Construct",
+              "version": "1.204.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "monocdk.Stack",
+          "version": "1.204.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "monocdk.App",
+      "version": "1.204.0"
+    }
+  }
+}
