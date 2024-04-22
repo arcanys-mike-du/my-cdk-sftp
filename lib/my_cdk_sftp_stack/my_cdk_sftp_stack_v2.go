@@ -7,13 +7,8 @@ import (
 	awstransfer "github.com/aws/aws-cdk-go/awscdk/v2/awstransfer"
 	constructs "github.com/aws/constructs-go/constructs/v10"
 	jsii "github.com/aws/jsii-runtime-go"
-	"my-cdk-sftp/internal/helpers"
-)
-
-const (
-	SftpRoleName      = "SftpUserRole" // Role name, not the ARN
-	S3BucketName      = "your-sftp-bucket-name"
-	SftpHomeDirectory = "/your-sftp-bucket-name/home/${transfer:UserName}"
+	"my-cdk-sftp/contants"
+	"my-cdk-sftp/helpers"
 )
 
 type MyCdkSftpStackProps struct {
@@ -26,12 +21,12 @@ func NewMyCdkSftpStack(scope constructs.Construct, id string, props *MyCdkSftpSt
 
 	// Create an S3 bucket for use
 	awss3.NewBucket(s, jsii.String("MySftpBucket"), &awss3.BucketProps{
-		BucketName:    jsii.String(S3BucketName),    // Use the constant here
-		RemovalPolicy: awscdk.RemovalPolicy_DESTROY, // Adjust the removal policy as needed
+		BucketName:    jsii.String(contants.S3BucketName), // Use the constant here
+		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,       // Adjust the removal policy as needed
 	})
 
 	// Create an IAM role for the SFTP server
-	role := awsiam.NewRole(s, jsii.String(SftpRoleName), &awsiam.RoleProps{
+	role := awsiam.NewRole(s, jsii.String(contants.SftpRoleName), &awsiam.RoleProps{
 		AssumedBy: awsiam.NewServicePrincipal(jsii.String("transfer.amazonaws.com"), nil),
 		ManagedPolicies: &[]awsiam.IManagedPolicy{
 			awsiam.ManagedPolicy_FromAwsManagedPolicyName(jsii.String("AmazonS3FullAccess")),
@@ -62,8 +57,8 @@ func NewMyCdkSftpStack(scope constructs.Construct, id string, props *MyCdkSftpSt
 		Role:           lambdaExecutionRole,
 		EnvVars: &map[string]*string{
 			"SFTP_ROLE_ARN":       role.RoleArn(),
-			"S3_BUCKET_NAME":      jsii.String(S3BucketName),
-			"SFTP_HOME_DIRECTORY": jsii.String(SftpHomeDirectory),
+			"S3_BUCKET_NAME":      jsii.String(contants.S3BucketName),
+			"SFTP_HOME_DIRECTORY": jsii.String(contants.SftpHomeDirectory),
 		},
 	})
 

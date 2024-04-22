@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/aws/aws-lambda-go/lambda"
+	"my-cdk-sftp/contants"
 	"os"
 )
 
@@ -19,16 +20,13 @@ type Response struct {
 }
 
 func HandleRequest(ctx context.Context, event Event) (Response, error) {
-	// Replace these with your actual username and password logic
-	const correctUsername = "testftpuser"
-	const correctPassword = "test123456"
 
 	// Fetch environment variables
 	roleArn := os.Getenv("SFTP_ROLE_ARN")
 	bucketName := os.Getenv("S3_BUCKET_NAME")
 	homeDirectory := os.Getenv("SFTP_HOME_DIRECTORY")
 
-	if event.Username == correctUsername && event.Password == correctPassword {
+	if event.Username == contants.FtpUsername && event.Password == contants.FtpPassword {
 		return Response{
 			Role:          roleArn,
 			Policy:        fmt.Sprintf("{\"Version\": \"2012-10-17\",\"Statement\": [{\"Sid\": \"AllowFullAccessToBucket\",\"Action\": [\"s3:*\"],\"Effect\": \"Allow\",\"Resource\": [\"arn:aws:s3:::%s/*\"]}]}", bucketName),
