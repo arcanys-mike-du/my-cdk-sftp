@@ -4,14 +4,6 @@
     "id": "App",
     "path": "",
     "children": {
-      "Tree": {
-        "id": "Tree",
-        "path": "Tree",
-        "constructInfo": {
-          "fqn": "monocdk.Construct",
-          "version": "1.204.0"
-        }
-      },
       "MyCdkSftpStack": {
         "id": "MyCdkSftpStack",
         "path": "MyCdkSftpStack",
@@ -25,26 +17,36 @@
                 "path": "MyCdkSftpStack/MySftpBucket/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
-                  "aws:cdk:cloudformation:props": {}
+                  "aws:cdk:cloudformation:props": {
+                    "bucketName": "your-sftp-bucket-name"
+                  }
                 },
                 "constructInfo": {
-                  "fqn": "monocdk.aws_s3.CfnBucket",
-                  "version": "1.204.0"
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.138.0"
                 }
               }
             },
             "constructInfo": {
-              "fqn": "monocdk.aws_s3.Bucket",
-              "version": "1.204.0"
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.138.0"
             }
           },
-          "SftpRole": {
-            "id": "SftpRole",
-            "path": "MyCdkSftpStack/SftpRole",
+          "SftpUserRole": {
+            "id": "SftpUserRole",
+            "path": "MyCdkSftpStack/SftpUserRole",
             "children": {
+              "ImportSftpUserRole": {
+                "id": "ImportSftpUserRole",
+                "path": "MyCdkSftpStack/SftpUserRole/ImportSftpUserRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.138.0"
+                }
+              },
               "Resource": {
                 "id": "Resource",
-                "path": "MyCdkSftpStack/SftpRole/Resource",
+                "path": "MyCdkSftpStack/SftpUserRole/Resource",
                 "attributes": {
                   "aws:cdk:cloudformation:type": "AWS::IAM::Role",
                   "aws:cdk:cloudformation:props": {
@@ -77,14 +79,369 @@
                   }
                 },
                 "constructInfo": {
-                  "fqn": "monocdk.aws_iam.CfnRole",
-                  "version": "1.204.0"
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.138.0"
                 }
               }
             },
             "constructInfo": {
-              "fqn": "monocdk.aws_iam.Role",
-              "version": "1.204.0"
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.138.0"
+            }
+          },
+          "CustomAuthorizerLambdaRole": {
+            "id": "CustomAuthorizerLambdaRole",
+            "path": "MyCdkSftpStack/CustomAuthorizerLambdaRole",
+            "children": {
+              "ImportCustomAuthorizerLambdaRole": {
+                "id": "ImportCustomAuthorizerLambdaRole",
+                "path": "MyCdkSftpStack/CustomAuthorizerLambdaRole/ImportCustomAuthorizerLambdaRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.138.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "MyCdkSftpStack/CustomAuthorizerLambdaRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "policies": [
+                      {
+                        "policyName": "inlinePolicy",
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "logs:CreateLogGroup",
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": "*"
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.138.0"
+                }
+              },
+              "DefaultPolicy": {
+                "id": "DefaultPolicy",
+                "path": "MyCdkSftpStack/CustomAuthorizerLambdaRole/DefaultPolicy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "MyCdkSftpStack/CustomAuthorizerLambdaRole/DefaultPolicy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "xray:PutTraceSegments",
+                                "xray:PutTelemetryRecords"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": "*"
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "CustomAuthorizerLambdaRoleDefaultPolicyC6A6456C",
+                        "roles": [
+                          {
+                            "Ref": "CustomAuthorizerLambdaRole53AA9DC5"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.138.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.138.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.138.0"
+            }
+          },
+          "CustomAuthorizerFunction": {
+            "id": "CustomAuthorizerFunction",
+            "path": "MyCdkSftpStack/CustomAuthorizerFunction",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "MyCdkSftpStack/CustomAuthorizerFunction/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "MyCdkSftpStack/CustomAuthorizerFunction/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.138.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "MyCdkSftpStack/CustomAuthorizerFunction/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.138.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.138.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "MyCdkSftpStack/CustomAuthorizerFunction/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "architectures": [
+                      "arm64"
+                    ],
+                    "code": {
+                      "s3Bucket": "cdk-hnb659fds-assets-964685753046-eu-north-1",
+                      "s3Key": "6825df8a286d893d3da12cf6d80f8aa9440d6ffca4cc408cf6a08d88607f216a.zip"
+                    },
+                    "environment": {
+                      "variables": {
+                        "S3_BUCKET_NAME": "your-sftp-bucket-name",
+                        "SFTP_HOME_DIRECTORY": "/your-sftp-bucket-name/home/${transfer:UserName}",
+                        "SFTP_ROLE_ARN": {
+                          "Fn::GetAtt": [
+                            "SftpUserRole246D0AB1",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    },
+                    "functionName": "CustomAuthorizerFunction",
+                    "handler": "bootstrap",
+                    "memorySize": 1024,
+                    "role": {
+                      "Fn::GetAtt": [
+                        "CustomAuthorizerLambdaRole53AA9DC5",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "provided.al2023",
+                    "timeout": 100,
+                    "tracingConfig": {
+                      "mode": "Active"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.138.0"
+                }
+              },
+              "LogRetention": {
+                "id": "LogRetention",
+                "path": "MyCdkSftpStack/CustomAuthorizerFunction/LogRetention",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "MyCdkSftpStack/CustomAuthorizerFunction/LogRetention/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.138.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.LogRetention",
+                  "version": "2.138.0"
+                }
+              },
+              "LogGroup": {
+                "id": "LogGroup",
+                "path": "MyCdkSftpStack/CustomAuthorizerFunction/LogGroup",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.138.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/aws-lambda-go-alpha.GoFunction",
+              "version": "2.138.0-alpha.0"
+            }
+          },
+          "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a": {
+            "id": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a",
+            "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.138.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.138.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.138.0"
+                }
+              },
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.138.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.138.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "logs:PutRetentionPolicy",
+                                    "logs:DeleteRetentionPolicy"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+                            "roles": [
+                              {
+                                "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.138.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.138.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.138.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.138.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
             }
           },
           "MySftpServer": {
@@ -94,15 +451,22 @@
               "aws:cdk:cloudformation:type": "AWS::Transfer::Server",
               "aws:cdk:cloudformation:props": {
                 "endpointType": "PUBLIC",
-                "identityProviderType": "SERVICE_MANAGED",
+                "identityProviderDetails": {},
+                "identityProviderType": "AWS_LAMBDA",
+                "loggingRole": {
+                  "Fn::GetAtt": [
+                    "SftpUserRole246D0AB1",
+                    "Arn"
+                  ]
+                },
                 "protocols": [
                   "SFTP"
                 ]
               }
             },
             "constructInfo": {
-              "fqn": "monocdk.aws_transfer.CfnServer",
-              "version": "1.204.0"
+              "fqn": "aws-cdk-lib.aws_transfer.CfnServer",
+              "version": "2.138.0"
             }
           },
           "CDKMetadata": {
@@ -113,26 +477,50 @@
                 "id": "Default",
                 "path": "MyCdkSftpStack/CDKMetadata/Default",
                 "constructInfo": {
-                  "fqn": "monocdk.CfnResource",
-                  "version": "1.204.0"
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.138.0"
                 }
               }
             },
             "constructInfo": {
-              "fqn": "monocdk.Construct",
-              "version": "1.204.0"
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "MyCdkSftpStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.138.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "MyCdkSftpStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.138.0"
             }
           }
         },
         "constructInfo": {
-          "fqn": "monocdk.Stack",
-          "version": "1.204.0"
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.138.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.3.0"
         }
       }
     },
     "constructInfo": {
-      "fqn": "monocdk.App",
-      "version": "1.204.0"
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.138.0"
     }
   }
 }

@@ -3,7 +3,7 @@ package main
 import (
 	awscdk "github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/jsii-runtime-go"
-	"my-cdk-sftp/contants"
+	"my-cdk-sftp/constants"
 	"my-cdk-sftp/lib/my_cdk_sftp_stack"
 )
 
@@ -21,7 +21,7 @@ func main() {
 
 func env() *awscdk.Environment {
 	return &awscdk.Environment{
-		Account: jsii.String(contants.Account),
-		Region:  jsii.String(contants.Region),
+		Account: jsii.String(constants.Account),
+		Region:  jsii.String(constants.Region),
 	}
 }

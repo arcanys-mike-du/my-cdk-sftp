@@ -2,13 +2,16 @@
  "Resources": {
   "MySftpBucketED1BD50F": {
    "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "your-sftp-bucket-name"
+   },
    "UpdateReplacePolicy": "Delete",
    "DeletionPolicy": "Delete",
    "Metadata": {
     "aws:cdk:path": "MyCdkSftpStack/MySftpBucket/Resource"
    }
   },
-  "SftpRoleA6503DD0": {
+  "SftpUserRole246D0AB1": {
    "Type": "AWS::IAM::Role",
    "Properties": {
     "AssumeRolePolicyDocument": {
@@ -39,18 +42,257 @@
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "MyCdkSftpStack/SftpRole/Resource"
+    "aws:cdk:path": "MyCdkSftpStack/SftpUserRole/Resource"
+   }
+  },
+  "CustomAuthorizerLambdaRole53AA9DC5": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+         ],
+         "Effect": "Allow",
+         "Resource": "*"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "inlinePolicy"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/CustomAuthorizerLambdaRole/Resource"
+   }
+  },
+  "CustomAuthorizerLambdaRoleDefaultPolicyC6A6456C": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomAuthorizerLambdaRoleDefaultPolicyC6A6456C",
+    "Roles": [
+     {
+      "Ref": "CustomAuthorizerLambdaRole53AA9DC5"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/CustomAuthorizerLambdaRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomAuthorizerFunction4A083F9F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Architectures": [
+     "arm64"
+    ],
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-964685753046-eu-north-1",
+     "S3Key": "6825df8a286d893d3da12cf6d80f8aa9440d6ffca4cc408cf6a08d88607f216a.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "S3_BUCKET_NAME": "your-sftp-bucket-name",
+      "SFTP_HOME_DIRECTORY": "/your-sftp-bucket-name/home/${transfer:UserName}",
+      "SFTP_ROLE_ARN": {
+       "Fn::GetAtt": [
+        "SftpUserRole246D0AB1",
+        "Arn"
+       ]
+      }
+     }
+    },
+    "FunctionName": "CustomAuthorizerFunction",
+    "Handler": "bootstrap",
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomAuthorizerLambdaRole53AA9DC5",
+      "Arn"
+     ]
+    },
+    "Runtime": "provided.al2023",
+    "Timeout": 100,
+    "TracingConfig": {
+     "Mode": "Active"
+    }
+   },
+   "DependsOn": [
+    "CustomAuthorizerLambdaRoleDefaultPolicyC6A6456C",
+    "CustomAuthorizerLambdaRole53AA9DC5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/CustomAuthorizerFunction/Resource",
+    "aws:asset:path": "asset.6825df8a286d893d3da12cf6d80f8aa9440d6ffca4cc408cf6a08d88607f216a",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "CustomAuthorizerFunctionLogRetentionCEBB65E1": {
+   "Type": "Custom::LogRetention",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+      "Arn"
+     ]
+    },
+    "LogGroupName": {
+     "Fn::Join": [
+      "",
+      [
+       "/aws/lambda/",
+       {
+        "Ref": "CustomAuthorizerFunction4A083F9F"
+       }
+      ]
+     ]
+    },
+    "RetentionInDays": 90
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/CustomAuthorizerFunction/LogRetention/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:PutRetentionPolicy",
+        "logs:DeleteRetentionPolicy"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "Roles": [
+     {
+      "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Handler": "index.handler",
+    "Runtime": "nodejs18.x",
+    "Timeout": 900,
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-964685753046-eu-north-1",
+     "S3Key": "4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35.zip"
+    },
+    "Role": {
+     "Fn::GetAtt": [
+      "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "MyCdkSftpStack/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource",
+    "aws:asset:path": "asset.4e26bf2d0a26f2097fb2b261f22bb51e3f6b4b52635777b1e54edbd8e2d58c35",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
    }
   },
   "MySftpServer": {
    "Type": "AWS::Transfer::Server",
    "Properties": {
     "EndpointType": "PUBLIC",
-    "IdentityProviderType": "SERVICE_MANAGED",
+    "IdentityProviderDetails": {},
+    "IdentityProviderType": "AWS_LAMBDA",
+    "LoggingRole": {
+     "Fn::GetAtt": [
+      "SftpUserRole246D0AB1",
+      "Arn"
+     ]
+    },
     "Protocols": [
      "SFTP"
     ]
    },
+   "DependsOn": [
+    "CustomAuthorizerFunction4A083F9F"
+   ],
    "Metadata": {
     "aws:cdk:path": "MyCdkSftpStack/MySftpServer"
    }
@@ -58,11 +300,45 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/yWLQQrDIBAA35K73SQ29AH1B+YBQcxarHWFVZuD+PeS5jTDwMwgpwWmISZKdg/Q1mJsEObIW8t3aM9qAxahHF3WhTcRmk4fPOPJLgobyg4ZlKMV+YvchUqUC1f7fzXmVNliF680g5Qwj7vhw9NoOD6W4Z29v3Gl4iOCvvgDN4/SNpoAAAA="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/zWPzU7EMAyEn6X31P1DiCPsSnDhgNoHWHlTN4SmCYpTKhTl3VHacvrGHsujaaHpniDWBW5cynEujb5DHALKWeDGt8gdxMsqZwriOtlTHbggUxIaF4i9M5T9nR/OaPmbx0Mlwd0NmSkwvGQIg8t9RLhO9nW1MmhnhXGK4d2pngLZfRM8Wp7I57OB/A/5JHpit3pJYv8zBFTaqj34NJKoSzTfnwh18Xx2qjKPyFK5035z/9FJKNdA20JTjeg3bSv0y+ND8cVal361QS8E/cE/ydjpxS8BAAA="
    },
    "Metadata": {
     "aws:cdk:path": "MyCdkSftpStack/CDKMetadata/Default"
    }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
   }
  }
 }

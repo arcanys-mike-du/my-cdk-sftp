@@ -1,4 +1,4 @@
-package contants
+package constants
 
 const (
 	Account = "964685753046"
